@@ -1,0 +1,24 @@
+--- a/FTI/src/Programs/FCI/FCIDiceLatticeModel.cc
++++ b/FTI/src/Programs/FCI/FCIDiceLatticeModel.cc
+@@ -7,7 +7,6 @@
+ #include "HilbertSpace/FermionOnSquareLatticeMomentumSpaceLong.h"
+ #include "HilbertSpace/BosonOnSquareLatticeMomentumSpace.h"
+ #include "HilbertSpace/BosonOnSquareLatticeWithSpinMomentumSpace.h"
+-#include "HilbertSpace/BosonOnSquareLatticeWithSpinMomentumSpaceNew.h"
+ 
+ #include "HilbertSpace/FermionOnLatticeRealSpace.h"
+ #include "HilbertSpace/FermionOnLatticeRealSpaceAnd2DTranslation.h"
+@@ -461,8 +460,11 @@
+ 		    }
+ 		  else
+ 		    {
+-		      // Space = new BosonOnSquareLatticeWithSpinMomentumSpace (NbrParticles, NbrSitesX, NbrSitesY, i, j);
+-		      Space = new BosonOnSquareLatticeWithSpinMomentumSpaceNew (NbrParticles, NbrSitesX, NbrSitesY, i, j);
++		      // Restored from the comment immediately above: the New variant
++		      // (BosonOnSquareLatticeWithSpinMomentumSpaceNew) never existed in
++		      // the canonical codebase. The original call to the non-New
++		      // canonical class is restored here.
++		      Space = new BosonOnSquareLatticeWithSpinMomentumSpace (NbrParticles, NbrSitesX, NbrSitesY, i, j);
+ 		      Space->TestFindAllStates(cout);
+ 		    }
+ 		  cout << "dim = " << Space->GetHilbertSpaceDimension()  << endl;

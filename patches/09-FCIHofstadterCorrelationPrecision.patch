@@ -1,0 +1,28 @@
+--- a/FTI/src/Programs/FCI/FCIHofstadterCorrelation.cc
++++ b/FTI/src/Programs/FCI/FCIHofstadterCorrelation.cc
+@@ -31,6 +31,7 @@
+ #include "Architecture/ArchitectureOperation/OperatorMatrixElementOperation.h"
+ 
+ #include <iostream>
++#include <limits>
+ #include <math.h>
+ #include <stdio.h>
+ #include <cstring>
+@@ -47,7 +48,7 @@
+ 
+ int main(int argc, char** argv)
+ {
+-  cout.precision(14);
++  cout.precision(std::numeric_limits<double>::max_digits10);
+ 
+   // some running options and help
+   OptionManager Manager ("FCIHofstadterCorrelation" , "0.01");
+@@ -270,7 +271,7 @@
+       
+   delete Space;
+   ofstream File;
+-  File.precision(14);
++  File.precision(std::numeric_limits<double>::max_digits10);
+   double XStep = ((double) NbrCellX) / ((double) NbrSamplesX);
+   double YStep = ((double) NbrCellY) / ((double) NbrSamplesY);
+   RealVector Position(2, true);

@@ -1,0 +1,26 @@
+--- a/FTI/src/Programs/HubbardModels/HubbardSquareLatticeModelJ2S2.cc
++++ b/FTI/src/Programs/HubbardModels/HubbardSquareLatticeModelJ2S2.cc
+@@ -299,7 +299,11 @@
+       ComplexMatrix J2Basis (Hamiltonian->GetHilbertSpaceDimension(), Hamiltonian->GetHilbertSpaceDimension());
+       RealDiagonalMatrix J2Eigenvalues = RealDiagonalMatrix(Hamiltonian->GetHilbertSpaceDimension());
+       Hamiltonian->GetHamiltonian(J2HRep);
++#ifdef __LAPACK__
+       J2HRep.LapackDiagonalize(J2Eigenvalues, J2Basis);
++#else
++      J2HRep.Diagonalize(J2Eigenvalues, J2Basis);
++#endif
+       J2Eigenvalues.SortMatrixUpOrder(J2Basis);
+       delete Hamiltonian;
+ 
+@@ -383,7 +387,11 @@
+ 		    }
+ 		}
+ 
++#ifdef __LAPACK__
+ 	      S2HRep.LapackDiagonalize(S2Eigenvalues);
++#else
++	      S2HRep.Diagonalize(S2Eigenvalues);
++#endif
+ 	      S2Eigenvalues.SortMatrixUpOrder();
+ 
+ 	      int* S2Values = new int[S2Eigenvalues.GetNbrRow()];

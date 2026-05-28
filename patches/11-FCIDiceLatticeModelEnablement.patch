@@ -1,0 +1,84 @@
+--- a/FTI/src/Programs/FCI/FCIDiceLatticeModel.cc	2026-05-28 13:29:35.632274289 +0000
++++ b/FTI/src/Programs/FCI/FCIDiceLatticeModel.cc	2026-05-28 13:29:35.753781541 +0000
+@@ -6,7 +6,7 @@
+ #include "HilbertSpace/FermionOnSquareLatticeWithSpinMomentumSpaceLong.h"
+ #include "HilbertSpace/FermionOnSquareLatticeMomentumSpaceLong.h"
+ #include "HilbertSpace/BosonOnSquareLatticeMomentumSpace.h"
+-#include "HilbertSpace/BosonOnSquareLatticeWithSpinMomentumSpace.h"
++#include "HilbertSpace/BosonOnSquareLatticeWithSU2SpinMomentumSpace.h"
+ 
+ #include "HilbertSpace/FermionOnLatticeRealSpace.h"
+ #include "HilbertSpace/FermionOnLatticeRealSpaceAnd2DTranslation.h"
+@@ -15,7 +15,6 @@
+ #include "HilbertSpace/BosonOnLatticeGutzwillerProjectionRealSpaceAnd2DTranslation.h"
+ #include "HilbertSpace/BosonOnLatticeGutzwillerProjectionRealSpace.h"
+ 
+-#include "HilbertSpace/BosonOnSquareLatticeWithSpinMomentumSpace.h" //added this
+ 
+ #include "Hamiltonian/ParticleOnLatticeAlternativeKagomeLatticeSingleBandHamiltonian.h"
+ //#include "Hamiltonian/ParticleOnLatticeKagomeLatticeSingleBandHamiltonian.h" //commented 
+@@ -140,6 +139,10 @@
+   (*SystemGroup) += new BooleanOption  ('\n', "four-body", "use a four body interaction instead of a two body interaction");
+   (*SystemGroup) += new BooleanOption  ('\n', "five-body", "use a five body interaction instead of a two body interaction");
+   (*SystemGroup) += new SingleDoubleOption  ('\n', "tp", "magnitude of the hoppings restoring triangular lattice geometry", 0.0);
++  (*SystemGroup) += new SingleDoubleOption  ('\n', "t1", "real part of the nearest neighbor hopping amplitude", 1.0);
++  (*SystemGroup) += new SingleDoubleOption  ('\n', "t2", "real part of the next nearest neighbor hopping amplitude", -0.3);
++  (*SystemGroup) += new SingleDoubleOption  ('\n', "l1", "imaginary part of the nearest neighbor hopping amplitude", 0.28);
++  (*SystemGroup) += new SingleDoubleOption  ('\n', "l2", "imaginary part of the next nearest neighbor hopping amplitude", 0.2);
+   (*SystemGroup) += new SingleIntegerOption  ('\n', "nx1", "first coordinate of the first spanning vector of the tilted lattice", 0);
+   (*SystemGroup) += new SingleIntegerOption  ('\n', "ny1", "second coordinate of the first spanning vector of the tilted lattice", 0);
+   (*SystemGroup) += new SingleIntegerOption  ('\n', "nx2", "first coordinate of the second spanning vector of the tilted lattice", 0);
+@@ -307,8 +310,7 @@
+ 	    BlochForm = true;
+ 	  if ((Manager.GetBoolean("export-onebody") == true) || (Manager.GetBoolean("export-onebodytext") == true) || (Manager.GetBoolean("singleparticle-chernnumber") == true) || (Manager.GetBoolean("singleparticle-berrycurvature") == true))
+ 	    ExportOneBody = true;
+-	//TODO: fix input parameters
+-	  TightBindingModelDiceLattice TightBindingModel(NbrSitesX, NbrSitesY,  Manager.GetDouble("tp"), Manager.GetDouble("mu-six"), 
++	  TightBindingModelDiceLattice TightBindingModel(NbrSitesX, NbrSitesY,  Manager.GetDouble("t1"), Manager.GetDouble("t2"), Manager.GetDouble("l1"), Manager.GetDouble("l2"), Manager.GetDouble("mu-six"), 
+ 							   Manager.GetDouble("gamma-x"), Manager.GetDouble("gamma-y"), Architecture.GetArchitecture(), ExportOneBody, BlochForm);
+ 	  if (Manager.GetBoolean("singleparticle-chernnumber") == true)
+ 	    {
+@@ -345,9 +347,8 @@
+ 	}
+       else
+ 	{
+-	//TODO: fix input parameters
+-	  TightBindingModelDiceLattice TightBindingModel(2, 2,  Manager.GetDouble("tp"), /*Manager.GetDouble("t2"), 
+-							   Manager.GetDouble("l1"), Manager.GetDouble("l2"),*/ Manager.GetDouble("mu-six"), 
++	  TightBindingModelDiceLattice TightBindingModel(2, 2,  Manager.GetDouble("t1"), Manager.GetDouble("t2"), 
++							   Manager.GetDouble("l1"), Manager.GetDouble("l2"), Manager.GetDouble("mu-six"), 
+ 							   Manager.GetDouble("gamma-x"), Manager.GetDouble("gamma-y"), 
+ 							   Architecture.GetArchitecture(), false);
+ 	  TightBindingModel.WriteAsciiSpectrumAlongHighSymmetryPoints(EigenvalueOutputFile, NbrSitesX);
+@@ -386,8 +387,7 @@
+     {
+       if (TiltedFlag == false)
+ 	{
+-	//TODO: fix input parameters 
+-	  TightBindingModel = new TightBindingModelDiceLattice (NbrSitesX, NbrSitesY,  Manager.GetDouble("tp"),/* Manager.GetDouble("t2"), Manager.GetDouble("l2"),*/ Manager.GetDouble("mu-six"), 							      Manager.GetDouble("gamma-x"), Manager.GetDouble("gamma-y"), Architecture.GetArchitecture());
++	  TightBindingModel = new TightBindingModelDiceLattice (NbrSitesX, NbrSitesY,  Manager.GetDouble("t1"), Manager.GetDouble("t2"), Manager.GetDouble("l1"), Manager.GetDouble("l2"), Manager.GetDouble("mu-six"), 							      Manager.GetDouble("gamma-x"), Manager.GetDouble("gamma-y"), Architecture.GetArchitecture());
+ 	}
+       else
+ 	{
+@@ -460,12 +460,15 @@
+ 		    }
+ 		  else
+ 		    {
+-		      // Restored from the comment immediately above: the New variant
+-		      // (BosonOnSquareLatticeWithSpinMomentumSpaceNew) never existed in
+-		      // the canonical codebase. The original call to the non-New
+-		      // canonical class is restored here.
+-		      Space = new BosonOnSquareLatticeWithSpinMomentumSpace (NbrParticles, NbrSitesX, NbrSitesY, i, j);
+-		      Space->TestFindAllStates(cout);
++		      // The originally-referenced BosonOnSquareLatticeWithSpinMomentumSpace
++		      // was an unfinished 2011 draft (its GenerateStates body is an
++		      // unimplemented stub). Two weeks later Regnault completed the
++		      // equivalent two-component class under the SUXSpin conventions:
++		      // BosonOnSquareLatticeWithSU2SpinMomentumSpace. It has the same
++		      // 5-argument (nbrBosons, nbrSiteX, nbrSiteY, kx, ky) constructor,
++		      // derives from ParticleOnSphereWithSpin (so the cast below holds),
++		      // and is the class every other FCI lattice program uses. Route to it.
++		      Space = new BosonOnSquareLatticeWithSU2SpinMomentumSpace (NbrParticles, NbrSitesX, NbrSitesY, i, j);
+ 		    }
+ 		  cout << "dim = " << Space->GetHilbertSpaceDimension()  << endl;
+ 		  if (Architecture.GetArchitecture()->GetLocalMemory() > 0)

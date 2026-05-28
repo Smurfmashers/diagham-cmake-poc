@@ -1,0 +1,150 @@
+--- a/FQHE/src/Programs/FQHEOnSphere/FQHESphereQuasiholesWithSpinTimeReversalSymmetryDensity.cc
++++ b/FQHE/src/Programs/FQHEOnSphere/FQHESphereQuasiholesWithSpinTimeReversalSymmetryDensity.cc
+@@ -593,7 +593,11 @@
+ 	      TotalCharge += OneBodyMatrixElements[0][MomentumIndex2];
+ 	    }
+ 	  RealDiagonalMatrix TmpUpEigenvalues(NbrInputStates);
++#ifdef __LAPACK__
+ 	  TotalChargeUpLayer.LapackDiagonalize(TmpUpEigenvalues);
++#else
++	  TotalChargeUpLayer.Diagonalize(TmpUpEigenvalues);
++#endif
+ 	  RealSymmetricMatrix TotalChargeDownLayer (NbrInputStates, true);
+ 	  for (int MomentumIndex2 = 0; MomentumIndex2 <= MomentumIndex; ++MomentumIndex2)
+ 	    {      
+@@ -601,15 +605,27 @@
+ 	      TotalCharge += OneBodyMatrixElements[1][LzMax - MomentumIndex2];
+ 	    }
+ 	  RealDiagonalMatrix TmpDownEigenvalues(NbrInputStates);
++#ifdef __LAPACK__
+ 	  TotalChargeDownLayer.LapackDiagonalize(TmpDownEigenvalues);
++#else
++	  TotalChargeDownLayer.Diagonalize(TmpDownEigenvalues);
++#endif
+ 	  RealDiagonalMatrix TmpEigenvalues(NbrInputStates);
++#ifdef __LAPACK__
+ 	  TotalCharge.LapackDiagonalize(TmpEigenvalues);
++#else
++	  TotalCharge.Diagonalize(TmpEigenvalues);
++#endif
+ 	  cout << MomentumIndex;
+ 	  for (int i = 0; i < NbrInputStates; ++i)
+ 	    cout << " " << TmpUpEigenvalues[i] << " " << TmpDownEigenvalues[i] << " " << TmpEigenvalues[i];
+ 	  cout << endl;
+ 	}
++#ifdef __LAPACK__
+       TotalChargeImbalance.LapackDiagonalize(TmpImbalanceEigenvalues);
++#else
++      TotalChargeImbalance.Diagonalize(TmpImbalanceEigenvalues);
++#endif
+     }
+   else
+     {
+@@ -635,7 +651,11 @@
+ 	      TotalCharge += ComplexOneBodyMatrixElements[0][MomentumIndex2];
+ 	    }
+ 	  RealDiagonalMatrix TmpUpEigenvalues(NbrInputStates);
++#ifdef __LAPACK__
+ 	  TotalChargeUpLayer.LapackDiagonalize(TmpUpEigenvalues);
++#else
++	  TotalChargeUpLayer.Diagonalize(TmpUpEigenvalues);
++#endif
+ 	  HermitianMatrix TotalChargeDownLayer (NbrInputStates, true);
+ 	  for (int MomentumIndex2 = 0; MomentumIndex2 <= MomentumIndex; ++MomentumIndex2)
+ 	    {      
+@@ -643,15 +663,27 @@
+ 	      TotalCharge += ComplexOneBodyMatrixElements[1][LzMax - MomentumIndex2];
+ 	    }
+ 	  RealDiagonalMatrix TmpDownEigenvalues(NbrInputStates);
++#ifdef __LAPACK__
+ 	  TotalChargeDownLayer.LapackDiagonalize(TmpDownEigenvalues);
++#else
++	  TotalChargeDownLayer.Diagonalize(TmpDownEigenvalues);
++#endif
+ 	  RealDiagonalMatrix TmpEigenvalues(NbrInputStates);
++#ifdef __LAPACK__
+ 	  TotalCharge.LapackDiagonalize(TmpEigenvalues);
++#else
++	  TotalCharge.Diagonalize(TmpEigenvalues);
++#endif
+ 	  cout << MomentumIndex;
+ 	  for (int i = 0; i < NbrInputStates; ++i)
+ 	    cout << " " << TmpUpEigenvalues[i] << " " << TmpDownEigenvalues[i] << " " << TmpEigenvalues[i];
+ 	  cout << endl;
+ 	}
++#ifdef __LAPACK__
+       TotalChargeImbalance.LapackDiagonalize(TmpImbalanceEigenvalues);
++#else
++      TotalChargeImbalance.Diagonalize(TmpImbalanceEigenvalues);
++#endif
+     }
+   for (int i = 0; i < NbrInputStates; ++i)
+     cout << "Charge imbalance between left and right (orbital cut) " << (TmpImbalanceEigenvalues[i]) << endl;
+@@ -727,12 +759,21 @@
+ 		  TmpMatrixTotalIntegratedCharge.MultiplyAndAdd(TmpFactor, OneBodyMatrixElements[1][LzMax - i]);
+ 		  
+ 		}
++#ifdef __LAPACK__
+ 	      TmpMatrixUpLayer.LapackDiagonalize(TmpEigenvaluesUpLayer);
+ 	      TmpMatrixUpLayerIntegratedCharge.LapackDiagonalize(TmpEigenvaluesUpLayerIntegratedCharge);
+ 	      TmpMatrixDownLayer.LapackDiagonalize(TmpEigenvaluesDownLayer);
+ 	      TmpMatrixDownLayerIntegratedCharge.LapackDiagonalize(TmpEigenvaluesDownLayerIntegratedCharge);
+ 	      TmpMatrixTotal.LapackDiagonalize(TmpEigenvaluesTotal);
+ 	      TmpMatrixTotalIntegratedCharge.LapackDiagonalize(TmpEigenvaluesTotalIntegratedCharge);
++#else
++	      TmpMatrixUpLayer.Diagonalize(TmpEigenvaluesUpLayer);
++	      TmpMatrixUpLayerIntegratedCharge.Diagonalize(TmpEigenvaluesUpLayerIntegratedCharge);
++	      TmpMatrixDownLayer.Diagonalize(TmpEigenvaluesDownLayer);
++	      TmpMatrixDownLayerIntegratedCharge.Diagonalize(TmpEigenvaluesDownLayerIntegratedCharge);
++	      TmpMatrixTotal.Diagonalize(TmpEigenvaluesTotal);
++	      TmpMatrixTotalIntegratedCharge.Diagonalize(TmpEigenvaluesTotalIntegratedCharge);
++#endif
+ 	      File << XPosition;
+ 	      
+ 	      // 	  if (TmpX <= NbrPoints / 2)
+@@ -758,7 +799,11 @@
+ 	      TmpFactor = -erf(- TmpShiftDown + (TmpPrefactor2 * ((double) i)));
+ 	      TotalChargeImbalance.MultiplyAndAdd(TmpFactor, OneBodyMatrixElements[1][LzMax - i]);	  
+ 	    }
++#ifdef __LAPACK__
+ 	  TotalChargeImbalance.LapackDiagonalize(TmpImbalanceEigenvaluesRealSpace);
++#else
++	  TotalChargeImbalance.Diagonalize(TmpImbalanceEigenvaluesRealSpace);
++#endif
+ 	}
+       else
+ 	{
+@@ -793,12 +838,21 @@
+ 		  TmpMatrixTotalIntegratedCharge.AddLinearCombination(TmpFactor, ComplexOneBodyMatrixElements[1][LzMax - i]);
+ 		  
+ 		}
++#ifdef __LAPACK__
+ 	      TmpMatrixUpLayer.LapackDiagonalize(TmpEigenvaluesUpLayer);
+ 	      TmpMatrixUpLayerIntegratedCharge.LapackDiagonalize(TmpEigenvaluesUpLayerIntegratedCharge);
+ 	      TmpMatrixDownLayer.LapackDiagonalize(TmpEigenvaluesDownLayer);
+ 	      TmpMatrixDownLayerIntegratedCharge.LapackDiagonalize(TmpEigenvaluesDownLayerIntegratedCharge);
+ 	      TmpMatrixTotal.LapackDiagonalize(TmpEigenvaluesTotal);
+ 	      TmpMatrixTotalIntegratedCharge.LapackDiagonalize(TmpEigenvaluesTotalIntegratedCharge);
++#else
++	      TmpMatrixUpLayer.Diagonalize(TmpEigenvaluesUpLayer);
++	      TmpMatrixUpLayerIntegratedCharge.Diagonalize(TmpEigenvaluesUpLayerIntegratedCharge);
++	      TmpMatrixDownLayer.Diagonalize(TmpEigenvaluesDownLayer);
++	      TmpMatrixDownLayerIntegratedCharge.Diagonalize(TmpEigenvaluesDownLayerIntegratedCharge);
++	      TmpMatrixTotal.Diagonalize(TmpEigenvaluesTotal);
++	      TmpMatrixTotalIntegratedCharge.Diagonalize(TmpEigenvaluesTotalIntegratedCharge);
++#endif
+ 	      File << XPosition;
+ 	      
+ 	      // 	  if (TmpX <= NbrPoints / 2)
+@@ -824,7 +878,11 @@
+ 	      TmpFactor = -erf(- TmpShiftDown + (TmpPrefactor2 * ((double) i)));
+ 	      TotalChargeImbalance.AddLinearCombination(TmpFactor, ComplexOneBodyMatrixElements[1][LzMax - i]);	  
+ 	    }
++#ifdef __LAPACK__
+ 	  TotalChargeImbalance.LapackDiagonalize(TmpImbalanceEigenvaluesRealSpace);
++#else
++	  TotalChargeImbalance.Diagonalize(TmpImbalanceEigenvaluesRealSpace);
++#endif
+ 	}
+ //       TotalChargeImbalance.LapackDiagonalize(TmpImbalanceEigenvaluesRealSpace);
+ //       for (int i = 0; i < NbrInputStates; ++i)

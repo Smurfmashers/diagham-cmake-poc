@@ -1,0 +1,62 @@
+--- a/FQHE/src/Programs/FQHEOnSphere/FQHESphereFermionsWithSpinEntanglementEntropyParticlePartition.cc
++++ b/FQHE/src/Programs/FQHEOnSphere/FQHESphereFermionsWithSpinEntanglementEntropyParticlePartition.cc
+@@ -231,7 +231,7 @@
+  			  ((ShiftedTotalLz - SubsystemTotalLz) >= ComplementarySubsystemMinTotalLz) && 
+  			  ((EigenstateFlag == false) || ((FilterLza == SubsystemTrueTotalLz) && (FilterSza == SubsystemTotalSz))))
+  			{
+- 			  cout << "processing subsystem size=" << SubsystemSize << "  subsystem nbr of particles=" << SubsystemNbrParticles << " subsystem total Lz=" << SubsystemTrueTotalLz << " subsystem total Sz=" << SubsystemTotalSz << endl;
++ 			  cout << "processing subsystem nbr of particles=" << SubsystemNbrParticles << " subsystem total Lz=" << SubsystemTrueTotalLz << " subsystem total Sz=" << SubsystemTotalSz << endl;
+  			  RealSymmetricMatrix PartialDensityMatrix = Space->EvaluatePartialDensityMatrixParticlePartition(SubsystemNbrParticles, SubsystemTrueTotalLz, SubsystemTotalSz, GroundState);
+  			  if (PartialDensityMatrix.GetNbrRow() > 1)
+  			    {
+@@ -256,8 +256,8 @@
+  					  if (TmpDiag[i] > 1e-14)
+  					    {
+  					      sprintf (TmpEigenstateName,
+- 						       "fermions_sphere_density_n_%d_2s_%d_lz_%d_la_%d_na_%d_lza_%d_sza_%d_.%d.vec",
+- 						       NbrParticles, LzMax, TotalLz, SubsystemSize,
++ 						       "fermions_sphere_density_n_%d_2s_%d_lz_%d_na_%d_lza_%d_sza_%d_.%d.vec",
++ 						       NbrParticles, LzMax, TotalLz,
+  						       SubsystemNbrParticles, SubsystemTrueTotalLz, SubsystemTotalSz, i);
+  					      TmpEigenstates[i].WriteVector(TmpEigenstateName);
+  					    }
+@@ -289,8 +289,8 @@
+  					  if (TmpDiag[i] > 1e-14)
+  					    {
+ 					      sprintf (TmpEigenstateName,
+- 						       "fermions_sphere_density_n_%d_2s_%d_lz_%d_la_%d_na_%d_lza_%d_sza_%d.%d.vec",
+- 						       NbrParticles, LzMax, TotalLz, SubsystemSize,
++ 						       "fermions_sphere_density_n_%d_2s_%d_lz_%d_na_%d_lza_%d_sza_%d.%d.vec",
++ 						       NbrParticles, LzMax, TotalLz,
+  						       SubsystemNbrParticles, SubsystemTrueTotalLz, SubsystemTotalSz, i);
+  					      TmpEigenstates[i].WriteVector(TmpEigenstateName);
+  					    }
+@@ -328,8 +328,8 @@
+  					  if (TmpDiag[i] > 1e-14)
+  					    {
+  					      sprintf (TmpEigenstateName,
+- 						       "fermions_sphere_density_n_%d_2s_%d_lz_%d_la_%d_na_%d_lza_%d_sza_%d.%d.vec",
+- 						       NbrParticles, LzMax, TotalLz, SubsystemSize,
++ 						       "fermions_sphere_density_n_%d_2s_%d_lz_%d_na_%d_lza_%d_sza_%d.%d.vec",
++ 						       NbrParticles, LzMax, TotalLz,
+  						       SubsystemNbrParticles, SubsystemTrueTotalLz, SubsystemTotalSz, i);
+  					      TmpEigenstates[i].WriteVector(TmpEigenstateName);
+  					    }
+@@ -357,7 +357,7 @@
+  				  DensityMatrixFile.open(DensityMatrixFileName, ios::binary | ios::out | ios::app); 
+  				  DensityMatrixFile.precision(14);
+  				  for (int i = 0; i < PartialDensityMatrix.GetNbrRow(); ++i)
+- 				    DensityMatrixFile << SubsystemSize << " " << SubsystemNbrParticles << " " << SubsystemTrueTotalLz << " " << SubsystemTotalSz << " " << TmpDiag[i] << endl;
++ 				    DensityMatrixFile << SubsystemNbrParticles << " " << SubsystemTrueTotalLz << " " << SubsystemTotalSz << " " << TmpDiag[i] << endl;
+  				  DensityMatrixFile.close();
+  				}
+  			    }
+@@ -375,7 +375,7 @@
+  				    ofstream DensityMatrixFile;
+  				    DensityMatrixFile.open(DensityMatrixFileName, ios::binary | ios::out | ios::app); 
+  				    DensityMatrixFile.precision(14);
+- 				    DensityMatrixFile << SubsystemSize << " " << SubsystemNbrParticles << " " << SubsystemTrueTotalLz << " " << SubsystemTotalSz << " " << TmpValue << endl;
++ 				    DensityMatrixFile << SubsystemNbrParticles << " " << SubsystemTrueTotalLz << " " << SubsystemTotalSz << " " << TmpValue << endl;
+  				    DensityMatrixFile.close();
+  				  }		  
+  			      }

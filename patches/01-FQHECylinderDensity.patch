@@ -1,0 +1,16 @@
+--- a/FQHE/src/Programs/FQHEOnCylinder/FQHECylinderDensity.cc
++++ b/FQHE/src/Programs/FQHEOnCylinder/FQHECylinderDensity.cc
+@@ -275,8 +275,13 @@
+ 	  TmpFactor = 0.5 * (1.0 + erf(XPosition + TmpShift - (TmpPrefactor2 * ((double) i))));
+ 	  TmpMatrix2.AddLinearCombination(TmpFactor, OccupationMatrixElements[i]);
+ 	}
++#ifdef __LAPACK__
+       TmpMatrix.LapackDiagonalize(TmpEigenvalues);
+       TmpMatrix2.LapackDiagonalize(TmpEigenvalues2);
++#else
++      TmpMatrix.Diagonalize(TmpEigenvalues);
++      TmpMatrix2.Diagonalize(TmpEigenvalues2);
++#endif
+       File << XPosition;
+       for (int i = 0; i < NbrInputStates; ++i)
+ 	{   
